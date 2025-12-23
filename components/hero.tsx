@@ -29,7 +29,7 @@ export default function Hero() {
         </div>
       </div>
       <div className="md:w-150">
-        <Image src={hero} alt="two men in a warehouse" className="w-full h-full object-cover rounded-2xl"/>
+        <Image src={hero} alt="two men in a warehouse" className="w-full h-full object-cover rounded-2xl" loading="eager"/>
       </div>
     </section>
   );
