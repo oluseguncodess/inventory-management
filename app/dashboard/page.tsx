@@ -6,7 +6,7 @@ export default async function Dashboard() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
-    redirect("/auth/sign-in");
+    redirect("/");
   }
   return <div>DashBoard</div>;
 }

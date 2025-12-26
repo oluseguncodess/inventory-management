@@ -3,10 +3,10 @@
 import { headers } from "next/headers";
 import { auth } from "../auth"
 
-export async function signUp(email: string, password: string) {
+export async function signUp(name: string, email: string, password: string) {
   const result = await auth.api.signUpEmail({
     body: {
-      name: email,
+      name,
       email,
       password,
       callbackURL: '/dashboard'

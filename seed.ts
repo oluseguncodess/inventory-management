@@ -1,4 +1,5 @@
 // seed.ts
+// command to use to initialize seed with sequlize --> node --env-file=.env --experimental-strip-types seed.ts
 import { Sequelize, DataTypes } from 'sequelize';
 import { randomUUID } from 'node:crypto';
 
@@ -23,6 +24,7 @@ async function main() {
       name: { type: DataTypes.STRING, allowNull: false },
       price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
       quantity: { type: DataTypes.INTEGER, allowNull: false },
+      lowStockAt: {type: DataTypes.INTEGER, allowNull: false}
       // Note: We do NOT need to define createdAt/updatedAt here
       // because timestamps: true handles them automatically.
     }, {
@@ -33,7 +35,7 @@ async function main() {
     });
 
     console.log('🌱 Generating data...');
-    const demoUserId = '1Kdh1AVSX1WMLrX0GszHPBXloWKyGWgT';
+    const demoUserId = 'yVqEgpaKjowGIYiYdWMMH9E40zHMCNIK';
 
     const productsData = Array.from({ length: 25 }).map((_, i) => ({
       id: randomUUID(),
@@ -41,6 +43,7 @@ async function main() {
       name: `Product ${1 + i}`,
       price: (Math.random() * 90 + 10).toFixed(2),
       quantity: Math.floor(Math.random() * 20),
+      lowStockAt: 5,
       // We removed the manual dates here. Sequelize will add them automatically now.
     }));
 

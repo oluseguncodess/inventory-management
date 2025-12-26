@@ -5,11 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn, signUp } from "@/lib/actions/auth-actions";
+import { formattedName } from "@/utils/formats";
 
 const formSchema = z
   .object({
+    name: z.string().min(1, "This is a required field"),
     email: z.string().min(1, "This field is required").email(),
     password: z
       .string()
@@ -34,6 +37,7 @@ export default function AuthForm() {
   const pathname = usePathname();
   const signInRoute = "/auth/sign-in";
   const signUpRoute = "/auth/sign-up";
+  const router = useRouter();
 
   const {
     register,
@@ -42,20 +46,27 @@ export default function AuthForm() {
     formState: { errors, isSubmitting },
   } = useForm<FormFields>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "", confirmPassword: "" },
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
   async function onHandleEmailAuth(data: FormFields) {
+    const { name, email, password } = data;
+
+    let success = false;
     try {
       if (pathname === signInRoute) {
-        const result = await signIn(data.email, data.password);
+        const result = await signIn(email, password);
         if (!result.user) {
           setError("root", { message: "Invalid email or password" });
+        } else {
+          success = true;
         }
       } else {
-        const result = await signUp(data.email, data.password);
+        const result = await signUp(formattedName(name), email, password);
         if (!result.user) {
           setError("root", { message: "Failed to create account" });
+        } else {
+          success = true;
         }
       }
     } catch (error) {
@@ -64,6 +75,10 @@ export default function AuthForm() {
           error instanceof Error ? error.message : "Unknown Error"
         }`,
       });
+    }
+
+    if (success) {
+      router.push("/dashboard");
     }
   }
 
@@ -74,6 +89,7 @@ export default function AuthForm() {
   buttontext = pathname === "/auth/sign-in" ? "Log in" : "Sign up";
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
 
@@ -92,6 +108,29 @@ export default function AuthForm() {
           <span className="text-red-500 text-[0.75rem]">
             {errors.root?.message}
           </span>
+        </Activity>
+        <Activity mode={pathname === signUpRoute ? "visible" : "hidden"}>
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="name"
+              className="text-[0.75rem] ml-1 justify-between flex"
+            >
+              Name
+            </label>
+            <input
+              {...register("name")}
+              className="py-2.5 px-2 rounded-md bg-field-black border border-gray-600 placeholder:text-[0.84rem] placeholder:text-gray-400 text-[0.84rem]"
+              type="text"
+              id="name"
+              placeholder="Enter your name"
+              autoComplete="name"
+            />
+            <Activity mode={errors.email ? "visible" : "hidden"}>
+              <span className="text-red-500 text-[0.75rem]">
+                {errors.email?.message}
+              </span>
+            </Activity>
+          </div>
         </Activity>
         <div className="flex flex-col gap-1">
           <label
@@ -160,7 +199,7 @@ export default function AuthForm() {
               <input
                 {...register("confirmPassword")}
                 className="py-2.5 px-2 rounded-md bg-field-black border border-gray-600 placeholder:text-[0.84rem] placeholder:text-gray-400 text-[0.84rem] w-full"
-                type={isPasswordVisible ? "text" : "password"}
+                type={isConfirmPasswordVisible ? "text" : "password"}
                 id="confirm-password"
                 placeholder="Enter your password"
                 autoComplete="confirm-password"
