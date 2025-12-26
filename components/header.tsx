@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Header() {
   return (
     <header className="p-4 md:p-12 w-full flex justify-between items-center">
@@ -10,7 +12,7 @@ export default function Header() {
         </svg>
         <span className="font-bold md:text-xl">InvPulse</span>
       </div>
-      <button className="bg-btn-blue py-1 px-3 rounded-md text-sm font-bold md:py-2 md:px-5">Login</button>
+      <Link href="/auth/sign-in" className="bg-btn-blue py-1 px-3 rounded-md text-sm font-bold md:py-2 md:px-5 cursor-pointer ">Login</Link>
     </header>
   );
 }

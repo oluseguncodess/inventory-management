@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InvPulse",
-  description: "Automate your workflow, reduce errors by 95%, and grow your business with the intelligent inventory platform built for the modern dark mode era.",
+  description:
+    "Automate your workflow, reduce errors by 95%, and grow your business with the intelligent inventory platform built for the modern dark mode era.",
 };
 
 export default function RootLayout({
@@ -26,8 +27,9 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        {children}
+          {children}
       </body>
     </html>
   );
