@@ -5,6 +5,7 @@
   --foreground: #171717;
   --btn-blue: rgb(59, 130, 246);
   --black: rgb(28, 32, 39);
+  --sidebar: #111418;
 }
 
 @theme inline {
@@ -12,6 +13,7 @@
   --color-foreground: var(--foreground);
   --color-btn-blue: var(--btn-blue);
   --color-field-black: var(--black);
+  --color-sidebar-background: var(--sidebar);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
