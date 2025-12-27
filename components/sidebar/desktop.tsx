@@ -6,10 +6,8 @@ import { usePathname } from "next/navigation";
 import User from "./user";
 
 
-
 export default function DesktopSidebar() {
   const pathname = usePathname();
- 
 
   return (
     <aside className="max-md:hidden w-1/5 min-w-65 h-[98%] p-3 my-auto ml-2 rounded-2xl  bg-sidebar-background justify-between flex flex-col">

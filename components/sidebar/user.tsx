@@ -15,7 +15,7 @@ function Userskeleton() {
 }
 
 export default function User() {
-  const { data: session, isPending } = useSession();
+  const { data, isPending} = useSession();
 
   if (isPending) {
     return <Userskeleton />;
@@ -24,16 +24,16 @@ export default function User() {
   return (
     <div className={`flex items-center gap-4`}>
       <div className="bg-btn-blue size-10 rounded-full flex justify-center items-center">
-        <span className="font-bold">
-          {session?.user.email.charAt(0).toUpperCase()}
+        <span className="font-bold capitalize">
+          {data?.user.email.charAt(0).toUpperCase() || 'o'}
         </span>
       </div>
       <div className="flex flex-col">
         <p className="text-[0.890rem] capitalize">
-          {session?.user.name}
+          {data?.user.name || 'user'}
         </p>
         <span className="text-[0.75rem] text-gray-500 lowercase">
-          {session?.user.email}
+          {data?.user.email || 'user@gmail.com'}
         </span>
       </div>
     </div>

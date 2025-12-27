@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn, signUp } from "@/lib/actions/auth-actions";
-import { formattedName } from "@/utils/formats";
+import { formattedName, lowercaseEmailUsername } from "@/utils/formats";
 
 export default function AuthForm() {
   const pathname = usePathname();
@@ -69,25 +69,29 @@ export default function AuthForm() {
     let success = false;
     try {
       if (pathname === signInRoute) {
-        const result = await signIn(email, password);
+        const result = await signIn(lowercaseEmailUsername(email), password);
         if (!result.user) {
           setError("root", { message: "Invalid email or password" });
+          return;
         } else {
           success = true;
         }
       } else {
-        const result = await signUp(formattedName(name!), email, password);
+        const result = await signUp(
+          formattedName(name!),
+          lowercaseEmailUsername(email),
+          password
+        );
         if (!result.user) {
           setError("root", { message: "Failed to create account" });
+          return;
         } else {
           success = true;
         }
       }
     } catch (error) {
       setError("root", {
-        message: `Authentication Error: ${
-          error instanceof Error ? error.message : "Unknown Error"
-        }`,
+        message: `${error instanceof Error ? error.message : "Unknown Error"}`,
       });
     }
 

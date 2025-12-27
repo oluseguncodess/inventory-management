@@ -35,7 +35,7 @@ async function main() {
     });
 
     console.log('🌱 Generating data...');
-    const demoUserId = 'yVqEgpaKjowGIYiYdWMMH9E40zHMCNIK';
+    const demoUserId = process.env.SEED_PHRASE;
 
     const productsData = Array.from({ length: 25 }).map((_, i) => ({
       id: randomUUID(),
