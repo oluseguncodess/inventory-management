@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import User from "./user";
 
-
 export default function DesktopSidebar() {
   const pathname = usePathname();
 
@@ -50,7 +49,7 @@ export default function DesktopSidebar() {
       <div className="flex flex-col">
         <div className="flex flex-col gap-5">
           <hr className="border-t border-gray-600" />
-          {/* <User/> */}
+          <User/>
         </div>
       </div>
     </aside>
