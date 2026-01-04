@@ -22,6 +22,7 @@ async function main() {
       },
       userId: { type: DataTypes.STRING, allowNull: false },
       name: { type: DataTypes.STRING, allowNull: false },
+      category: { type: DataTypes.STRING, allowNull: true },
       price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
       quantity: { type: DataTypes.INTEGER, allowNull: false },
       lowStockAt: {type: DataTypes.INTEGER, allowNull: false}
@@ -35,12 +36,15 @@ async function main() {
     });
 
     console.log('🌱 Generating data...');
-    const demoUserId = 'yVqEgpaKjowGIYiYdWMMH9E40zHMCNIK';
+    const demoUserId = process.env.SEED_PHRASE;
+
+    const categories = ['Electronics', 'Furniture', 'Accessories', 'Office Supplies', 'Toys', 'Eggs'];
 
     const productsData = Array.from({ length: 25 }).map((_, i) => ({
       id: randomUUID(),
       userId: demoUserId,
       name: `Product ${1 + i}`,
+      category: categories[Math.floor(Math.random() * categories.length)],
       price: (Math.random() * 90 + 10).toFixed(2),
       quantity: Math.floor(Math.random() * 20),
       lowStockAt: 5,

@@ -12,6 +12,7 @@ model Product {
   userId     String
   name       String
   sku        String?  @unique
+  category   String?  
   price      Decimal  @db.Decimal(12, 2)
   quantity   Int      @default(0)
   lowStockAt Int?
@@ -20,6 +21,7 @@ model Product {
 
   @@index([createdAt])
   @@index([userId, name])
+  @@index([userId, category])
 }
 
 model account {

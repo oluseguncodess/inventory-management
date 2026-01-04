@@ -8,36 +8,51 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn, signUp } from "@/lib/actions/auth-actions";
-import { formattedName } from "@/utils/formats";
-
-const formSchema = z
-  .object({
-    name: z.string().min(1, "This is a required field"),
-    email: z.string().min(1, "This field is required").email(),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters long")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Password must contain at least one special character"
-      ),
-    confirmPassword: z.string().optional(),
-  })
-  .refine(
-    (data) => !data.confirmPassword || data.password === data.confirmPassword,
-    { message: "Passwords do not match", path: ["confirmPassword"] }
-  );
-
-type FormFields = z.infer<typeof formSchema>;
+import { formattedName, lowercaseEmailUsername } from "@/utils/formats";
 
 export default function AuthForm() {
   const pathname = usePathname();
   const signInRoute = "/auth/sign-in";
   const signUpRoute = "/auth/sign-up";
   const router = useRouter();
+
+  const formSchema = z
+    .object({
+      name:
+        pathname === signUpRoute
+          ? z.string().min(1, "This is a required field")
+          : z.string().optional(),
+      email: z.string().min(1, "This field is required").email(),
+      password:
+        pathname === signUpRoute
+          ? z
+              .string()
+              .min(8, "Password must be at least 8 characters long")
+              .regex(
+                /[A-Z]/,
+                "Password must contain at least one uppercase letter"
+              )
+              .regex(
+                /[a-z]/,
+                "Password must contain at least one lowercase letter"
+              )
+              .regex(/[0-9]/, "Password must contain at least one number")
+              .regex(
+                /[^A-Za-z0-9]/,
+                "Password must contain at least one special character"
+              )
+          : z.string().min(1, "Password is required"),
+      confirmPassword:
+        pathname === signUpRoute
+          ? z.string().min(1, "Please confirm your password")
+          : z.string().optional(),
+    })
+    .refine(
+      (data) => !data.confirmPassword || data.password === data.confirmPassword,
+      { message: "Passwords do not match", path: ["confirmPassword"] }
+    );
+
+  type FormFields = z.infer<typeof formSchema>;
 
   const {
     register,
@@ -51,29 +66,32 @@ export default function AuthForm() {
 
   async function onHandleEmailAuth(data: FormFields) {
     const { name, email, password } = data;
-
     let success = false;
     try {
       if (pathname === signInRoute) {
-        const result = await signIn(email, password);
+        const result = await signIn(lowercaseEmailUsername(email), password);
         if (!result.user) {
           setError("root", { message: "Invalid email or password" });
+          return;
         } else {
           success = true;
         }
       } else {
-        const result = await signUp(formattedName(name), email, password);
+        const result = await signUp(
+          formattedName(name!),
+          lowercaseEmailUsername(email),
+          password
+        );
         if (!result.user) {
           setError("root", { message: "Failed to create account" });
+          return;
         } else {
           success = true;
         }
       }
     } catch (error) {
       setError("root", {
-        message: `Authentication Error: ${
-          error instanceof Error ? error.message : "Unknown Error"
-        }`,
+        message: `${error instanceof Error ? error.message : "Unknown Error"}`,
       });
     }
 
@@ -82,11 +100,7 @@ export default function AuthForm() {
     }
   }
 
-  let buttontext;
-  if (isSubmitting) {
-    buttontext = "Submitting...";
-  }
-  buttontext = pathname === "/auth/sign-in" ? "Log in" : "Sign up";
+  const buttontext = pathname === "/auth/sign-in" ? "Log in" : "Sign up";
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -127,7 +141,7 @@ export default function AuthForm() {
             />
             <Activity mode={errors.email ? "visible" : "hidden"}>
               <span className="text-red-500 text-[0.75rem]">
-                {errors.email?.message}
+                {errors.name?.message}
               </span>
             </Activity>
           </div>
@@ -228,8 +242,9 @@ export default function AuthForm() {
         <button
           type="submit"
           className="bg-btn-blue py-2.5 rounded-xl text-sm font-bold"
+          disabled={isSubmitting}
         >
-          {buttontext}
+          {isSubmitting ? "Submitting..." : buttontext}
         </button>
         <div className="flex justify-between items-center">
           <Link
