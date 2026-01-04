@@ -11,14 +11,20 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function SectionCards() {
+interface SectionCardsProps {
+  noOfProducts: number
+  totalValue: string,
+  lowStock: number
+}
+ 
+export default function SectionCards({noOfProducts, totalValue, lowStock}: SectionCardsProps) {
   return (
     <div className="grid max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 xl:grid-cols-4 2xl:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
+          <CardDescription>Total Value</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums">
-            $1,250.00
+            {totalValue}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -38,9 +44,9 @@ export default function SectionCards() {
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
+          <CardDescription>Total Products</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums">
-            1,234
+            {noOfProducts}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -60,9 +66,9 @@ export default function SectionCards() {
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>Low Stock Alerts</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums">
-            45,678
+            {lowStock}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
