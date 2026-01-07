@@ -12,7 +12,7 @@ const colors = [
 ];
 
 export async function queryDatabase() {
-  const [totalProducts, lowStock, allProducts, totalQuantityResult, categoryDataResult] = await Promise.all([
+  const [totalProducts, lowStock, allProducts, totalQuantityResult, categoryDataResult, inventory] = await Promise.all([
     prisma.product.count({ where: { userId: id } }),
     prisma.product.count({
       where: {
@@ -45,6 +45,10 @@ export async function queryDatabase() {
           category: 'desc'
         }
       }
+    }),
+    prisma.product.findMany({
+      where: { userId: id },
+      select: { id: true, name: true, price: true, quantity: true, category: true }
     })
   ])
 
@@ -55,7 +59,8 @@ export async function queryDatabase() {
       lowStock: 0,
       totalValue: '$0',
       totalQuantity: 0,
-      categoryData: [] // Fixed typo: catergoryData -> categoryData
+      categoryData: [],
+      inventoryData: []
     };
   }
 
@@ -92,5 +97,10 @@ export async function queryDatabase() {
     currency: 'USD'
   }).format(Number(total));
 
-  return { totalProducts, lowStock, totalValue, totalQuantity, categoryData }; 
+  const inventoryData = inventory.map(item => ({
+  ...item,
+  price: item.price.toNumber().toLocaleString(),
+}));
+
+  return { totalProducts, lowStock, totalValue, totalQuantity, categoryData, inventoryData };
 }

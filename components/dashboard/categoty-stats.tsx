@@ -1,4 +1,4 @@
-import { queryDatabase } from "@/lib/actions/section-card-actions";
+import { queryDatabase } from "@/lib/actions/query-action";
 
 export default async function CategoryStats() {
   const {categoryData} = await queryDatabase()
