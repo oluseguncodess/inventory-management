@@ -1,4 +1,4 @@
-import { queryDatabase } from "@/lib/actions/section-card-actions";
+import { queryDatabase } from "@/lib/actions/query-action";
 import CategoryStats from "./categoty-stats";
 import ChartPieDonutText from "./shadcn-piechart";
 

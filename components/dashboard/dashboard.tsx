@@ -1,7 +1,7 @@
 import SectionCards from "./section-card";
 import ChartAreaDefault from "./chart-area-default";
 import ChartCategory from "./chart-category";
-import { queryDatabase } from "@/lib/actions/section-card-actions";
+import { queryDatabase } from "@/lib/actions/query-action";
 
 export default async function Dashboard() {
  const {totalProducts, totalValue, lowStock} = await queryDatabase()
