@@ -7,7 +7,7 @@ export default async function CategoryStats() {
       {categoryData.map(cat => <li key={cat.id} className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <span className={`size-2.5 rounded-full`} style={{backgroundColor: `${cat.color}`}}></span>
-          <span className="font-medium text-[0.9rem]">{cat.category}</span>
+          <span className="font-medium text-[0.9rem] capitalize">{cat.category}</span>
         </div>
         <span className="text-gray-500 text-[0.9rem] font-medium">{cat.percentage}%</span>
       </li>)}
