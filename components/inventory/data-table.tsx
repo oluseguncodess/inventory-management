@@ -129,117 +129,6 @@ function DragHandle({ id }: { id: string }) {
   );
 }
 
-// const columns: ColumnDef<z.infer<typeof schema>>[] = [
-//   {
-//     id: "drag",
-//     header: () => null,
-//     cell: ({ row }) => <DragHandle id={row.original.id} />,
-//   },
-//   {
-//     id: "select",
-//     header: ({ table }) => (
-//       <div className="flex items-center justify-center">
-//         <Checkbox
-//           checked={
-//             table.getIsAllPageRowsSelected() ||
-//             (table.getIsSomePageRowsSelected() && "indeterminate")
-//           }
-//           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//           aria-label="Select all"
-//         />
-//       </div>
-//     ),
-//     cell: ({ row }) => (
-//       <div className="flex items-center justify-center">
-//         <Checkbox
-//           checked={row.getIsSelected()}
-//           onCheckedChange={(value) => row.toggleSelected(!!value)}
-//           aria-label="Select row"
-//         />
-//       </div>
-//     ),
-//     enableSorting: false,
-//     enableHiding: false,
-//   },
-//   {
-//     accessorKey: "name",
-//     header: "Product",
-//     cell: ({ row }) => {
-//       return <TableCellViewer item={row.original} />;
-//     },
-//     enableHiding: false,
-//   },
-//   {
-//     accessorKey: "category",
-//     header: "Category",
-//     cell: ({ row }) => (
-//       <Badge variant="outline" className="text-muted-foreground px-1.5">
-//         {row.original.category}
-//       </Badge>
-//     ),
-//   },
-//   {
-//     accessorKey: "price",
-//     header: () => <div className="">Price</div>,
-//     cell: ({ row }) => {
-//       const price = parseFloat(row.getValue("price"));
-//       const formatted = new Intl.NumberFormat("en-US", {
-//         style: "currency",
-//         currency: "USD",
-//       }).format(price);
-
-//       return <div className="font-medium">{formatted}</div>;
-//     },
-//   },
-//   {
-//     accessorKey: "quantity",
-//     header: () => <div className="w-full">Quantity</div>,
-//     cell: ({ row }) => {
-//       return <div className="px-3">{row.original.quantity}</div>;
-//     },
-//   },
-//   {
-//     id: "actions",
-//     header: "Actions",
-//     cell: ({ row }) => {
-//       const product = row.original;
-//       return (
-//         <DropdownMenu>
-//           <DropdownMenuTrigger asChild>
-//             <Button
-//               variant="ghost"
-//               className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-//               size="icon"
-//             >
-//               <IconDotsVertical />
-//               <span className="sr-only">Open menu</span>
-//             </Button>
-//           </DropdownMenuTrigger>
-//           <DropdownMenuContent align="end" className="w-32">
-//             <DropdownMenuItem>Edit</DropdownMenuItem>
-//             <DropdownMenuItem>Make a copy</DropdownMenuItem>
-//             <DropdownMenuItem>Favorite</DropdownMenuItem>
-//             <DropdownMenuSeparator />
-//             <DropdownMenuItem
-//               variant="destructive"
-//               onClick={async () => {
-//                 const result = await deleteProduct(product.id);
-//                 if (result.success) {
-//                   toast.success("Product deleted successfully");
-//                 } else {
-//                   toast.error("Failed to delete product");
-//                 }
-//               }}
-//             >
-//               Delete
-//             </DropdownMenuItem>
-//           </DropdownMenuContent>
-//         </DropdownMenu>
-//       );
-//     },
-//   },
-// ];
-
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
@@ -270,7 +159,6 @@ export function DataTable({
 }: {
   data: z.infer<typeof schema>[];
 }) {
-  const router = useRouter()
 
   const columns: ColumnDef<z.infer<typeof schema>>[] = React.useMemo(() => [
   {
@@ -384,7 +272,7 @@ export function DataTable({
       );
     },
   },
-], [router])
+], [])
 
 
   const [data, setData] = React.useState(() => initialData);
