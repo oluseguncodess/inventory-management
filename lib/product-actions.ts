@@ -9,7 +9,6 @@ import z from 'zod';
 
 type ProductFormData = z.infer<typeof formSchema>
 
-
 export async function deleteProduct(productId: string) {
   const { id: userId } = await getCurrentUser();
   try {
@@ -29,30 +28,43 @@ export async function deleteProduct(productId: string) {
 
 export async function addProduct(product: ProductFormData) {
   const { id: userId } = await getCurrentUser();
-  
+
   try {
     const validateData = formSchema.parse(product);
-    console.log('Validated data:', validateData);
-    
+
+    const createProduct =
+    {
+      id: randomUUID(),
+      userId,
+      name: validateData.name,
+      category: validateData.category,
+      sku: validateData.sku || null,
+      price: validateData.price,
+      quantity: validateData.quantity,
+      lowStockAt: validateData.lowStockAt,
+      updatedAt: new Date()
+    }
+    await prisma.product.create({ data: createProduct })
+
+    revalidatePath('/inventory')
+
     return { 
       success: true, 
-      message: 'Data passed successfully',
-      data: validateData 
+      message: "Product added successfully" 
     };
-  } catch (error) {
-    console.error('Server error:', error);
     
+  }
+  catch (error) {
+
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        message: error.message || 'Validation failed' 
+      return {
+        success: false,
+        message: error.message || 'Validation failed'
       };
     }
-    
-    return { 
-      success: false, 
-      message: 'An unexpected error occurred' 
+    return {
+      success: false,
+      message: 'An unexpected error occurred'
     };
   }
-
 }

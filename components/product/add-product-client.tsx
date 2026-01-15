@@ -12,11 +12,14 @@ import ErrorsList from "./errorlist";
 import { Activity } from "react";
 import { addProduct } from "@/lib/product-actions";
 import { formSchema } from "@/lib/schema/product-schema";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type FormFields = z.infer<typeof formSchema>;
 type TFormFields = z.input<typeof formSchema>;
 
 export default function AddProductClient() {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -37,12 +40,15 @@ export default function AddProductClient() {
       const result = await addProduct(data);
 
       if (result?.success) {
-        console.log("success");
+        toast(result.message || 'Product added successfully')
+        router.push('/inventory')
       } else {
         console.log("error:", result?.message);
       }
     } catch (error) {
-      console.error("Unexpected error:", error);
+      if(error instanceof Error) {
+        toast.error(error.message || 'An unexpectd error occured') 
+      }
     }
   }
 
