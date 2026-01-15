@@ -36,8 +36,8 @@ export async function addProduct(product: ProductFormData) {
     {
       id: randomUUID(),
       userId,
-      name: validateData.name,
-      category: validateData.category,
+      name: validateData.name.toUpperCase(),
+      category: validateData.category.toUpperCase(),
       sku: validateData.sku || null,
       price: validateData.price,
       quantity: validateData.quantity,
