@@ -2,8 +2,6 @@ import { prisma } from "@/prisma";
 import { getCurrentUser } from "./auth-requests";
 import { processChartData } from "@/utils/process-chart-data";
 
-const { id } = await getCurrentUser()
-
 const colors = [
   'var(--chart-1)',
   'var(--chart-2)',
@@ -13,6 +11,7 @@ const colors = [
 ];
 
 export async function queryDatabase() {
+  const { id } = await getCurrentUser()
   const [totalProducts, lowStock, allProducts, totalQuantityResult, categoryDataResult, inventory, chartDataRaw] = await Promise.all([
     prisma.product.count({ where: { userId: id } }),
     prisma.product.count({
