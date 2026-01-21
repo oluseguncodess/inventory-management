@@ -18,31 +18,35 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 
-export const description = "A simple area chart"
-
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
-
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  quantity: {
+    label: "Products Added",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig
 
-export default function ChartAreaDefault() {
+interface ChartAreaDefaultProps {
+  chartData: { month: string; quantity: number }[];
+}
+
+export default function ChartAreaDefault({ chartData }: ChartAreaDefaultProps) {
+  // Calculate trend (compare last month to previous month)
+  const trend = chartData.length >= 2 
+    ? ((chartData[chartData.length - 1].quantity - chartData[chartData.length - 2].quantity) / chartData[chartData.length - 2].quantity * 100).toFixed(1)
+    : 0;
+
+  const dateRange = chartData.length > 0 
+    ? `${chartData[0].month} - ${chartData[chartData.length - 1].month}`
+    : 'No data';
+
+  const totalQuantity = chartData.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <Card className="flex-1 max-xl:hidden">
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
+        <CardTitle>Inventory Growth</CardTitle>
         <CardDescription>
-          Showing total visitors for the last 6 months
+          Showing products added to inventory over time
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -61,18 +65,22 @@ export default function ChartAreaDefault() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => {
+                // Show just the month name (first 3 letters)
+                const monthName = value.split(' ')[0];
+                return monthName.slice(0, 3);
+              }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
             <Area
-              dataKey="desktop"
+              dataKey="quantity"
               type="natural"
-              fill="var(--color-desktop)"
+              fill="var(--color-quantity)"
               fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="var(--color-quantity)"
             />
           </AreaChart>
         </ChartContainer>
@@ -81,10 +89,11 @@ export default function ChartAreaDefault() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              {Number(trend) >= 0 ? 'Trending up' : 'Trending down'} by {Math.abs(Number(trend))}% this month 
+              <TrendingUp className="h-4 w-4" />
             </div>
             <div className="text-muted-foreground flex items-center gap-2 leading-none">
-              January - June 2024
+              {dateRange} • {totalQuantity} total products
             </div>
           </div>
         </div>

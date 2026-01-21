@@ -1,7 +1,8 @@
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "./auth-requests";
+import { processChartData } from "@/utils/process-chart-data";
 
-const { id } = getCurrentUser()
+const { id } = await getCurrentUser()
 
 const colors = [
   'var(--chart-1)',
@@ -12,7 +13,7 @@ const colors = [
 ];
 
 export async function queryDatabase() {
-  const [totalProducts, lowStock, allProducts, totalQuantityResult, categoryDataResult, inventory] = await Promise.all([
+  const [totalProducts, lowStock, allProducts, totalQuantityResult, categoryDataResult, inventory, chartDataRaw] = await Promise.all([
     prisma.product.count({ where: { userId: id } }),
     prisma.product.count({
       where: {
@@ -49,8 +50,16 @@ export async function queryDatabase() {
     prisma.product.findMany({
       where: { userId: id },
       select: { id: true, name: true, price: true, quantity: true, category: true }
+    }),
+    prisma.product.findMany({
+      where: { userId: id },
+      select: {
+        createdAt: true,
+        quantity: true
+      },
+      orderBy: { createdAt: 'asc' }
     })
-  ])
+  ]);
 
   // Handle empty products case
   if (totalProducts === 0) {
@@ -60,7 +69,8 @@ export async function queryDatabase() {
       totalValue: '$0',
       totalQuantity: 0,
       categoryData: [],
-      inventoryData: []
+      inventoryData: [],
+      chartData: [],
     };
   }
 
@@ -98,9 +108,19 @@ export async function queryDatabase() {
   }).format(Number(total));
 
   const inventoryData = inventory.map(item => ({
-  ...item,
-  price: item.price.toNumber().toLocaleString(),
-}));
+    ...item,
+    price: item.price.toNumber().toLocaleString(),
+  }));
 
-  return { totalProducts, lowStock, totalValue, totalQuantity, categoryData, inventoryData };
+  const chartData = processChartData(chartDataRaw);
+
+  return {
+    totalProducts,
+    lowStock,
+    totalValue,
+    totalQuantity,
+    categoryData,
+    inventoryData,
+    chartData
+  };
 }
