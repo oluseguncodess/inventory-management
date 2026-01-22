@@ -91,7 +91,7 @@ export default function AuthForm() {
       }
     } catch (error) {
       setError("root", {
-        message: `${error instanceof Error ? error.message : "Unknown Error"}`,
+        message: `${error instanceof Error ? 'Server error' : "Unknown Error"}`,
       });
     }
 
